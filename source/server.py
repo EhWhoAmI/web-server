@@ -27,19 +27,21 @@ def server(HOST = '', PORT = 80):
 				try:
 					file_text = ''
 					with open('htdocs' + file, 'rb') as in_file:
-						file_text = bytes.decode(in_file.read())
+						file_text = in_file.read()
 						
 					contentType = ''
 					if file.endswith('.html'):
 						contentType = 'text/html'
 					elif file.endswith('.css'):
 						contentType = 'text/css'
+					elif file.endswith('.jpeg') | file.endswith('.jpg'):
+						contentType = 'image/jpeg'
 					else:
 						contentType = 'text/plain'
 						
-					content = create_headers(200, len(contentType), contentType) + file_text
+					content = bytes(create_headers(200, len(file_text), contentType), 'utf-8') + file_text
 					
-					conn.send(bytes(content, 'utf-8'))
+					conn.send(content)
 				except FileNotFoundError:
 					# Send 404 not found
 					errorText = ''
@@ -47,10 +49,14 @@ def server(HOST = '', PORT = 80):
 						errorText = bytes.decode(in_file.read())
 						
 					conn.send(bytes(create_headers(404, len(errorText), 'text/html') + errorText, 'utf-8'))
-					
+					print(addr[0] + ' - 404 error')
 				except:
 					# 500 error
-					conn.send(bytes(create_headers(500, 0, 'text/html'), 'utf-8'))
+					with open('error-files/500.html', 'rb') as in_file:
+						errorText = bytes.decode(in_file.read())
+					conn.send(bytes(create_headers(500, len(errorText), 'text/html') + errorText, 'utf-8'))
+					print(addr[0] + ' - 500 error')
+					
 					
 				conn.close()	
 				continue
