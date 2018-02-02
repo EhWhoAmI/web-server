@@ -1,5 +1,6 @@
 import socket
 import time
+from source.headers import *
 
 def server(HOST = '', PORT = 80):
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -9,12 +10,15 @@ def server(HOST = '', PORT = 80):
 		while True:
 			# Send infomation
 			conn, addr = sock.accept()
-			out = conn.recv(2048)
+			out = conn.recv(4096)
 			input = bytes.decode(out)
-			print(input)
+
 			# Parse header string
+			head = header(input)
+			print(head.headers)
+
 			# First line is the request line
-			if input[0:3] == 'GET':
+			if head.command == 'GET':
 				# this is a get request, read until \r\n because http uses this.
 				nl = input.find('\r\n')
 				print(addr[0] + ' - "' + input[0:nl] + '"')
@@ -56,14 +60,11 @@ def server(HOST = '', PORT = 80):
 						errorText = bytes.decode(in_file.read())
 					conn.send(bytes(create_headers(500, len(errorText), 'text/html') + errorText, 'utf-8'))
 					print(addr[0] + ' - 500 error')
-			if input[0:4] == "POST":
-				print(addr[0] + 'POST')
-
+			if head.command == "POST":
+				print(addr[0] + '- POST')
 
 				conn.close()
 				continue
-
-
 
 def create_headers(code, contentLen, contentType):
 	header = ''
