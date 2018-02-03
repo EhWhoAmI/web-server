@@ -1,6 +1,10 @@
 import socket
 import time
+import sys
 from source.headers import *
+from source.get import *
+from source.post import *
+
 
 def server(HOST = '', PORT = 80):
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
@@ -14,66 +18,26 @@ def server(HOST = '', PORT = 80):
 			input = bytes.decode(out)
 
 			# Parse header string
-			head = header(input)
-			print(head.headers)
+			headert = input.split('\r\n\r\n')
+
+			head = header(headert[0])
 
 			# First line is the request line
 			if head.command == 'GET':
 				# this is a get request, read until \r\n because http uses this.
-				nl = input.find('\r\n')
-				print(addr[0] + ' - "' + input[0:nl] + '"')
+				print(addr[0] + ' - "' + head.cmdText + '"')
 				# Get file accessed
-				argList = input.split()
+				argList = head.cmdText.split()
 
 				file = argList[1]
-				if file.endswith('/'):
-					file = file + 'index.html'
-				try:
-					file_text = ''
-					with open('htdocs' + file, 'rb') as in_file:
-						file_text = in_file.read()
-
-					contentType = ''
-					if file.endswith('.html'):
-						contentType = 'text/html'
-					elif file.endswith('.css'):
-						contentType = 'text/css'
-					elif file.endswith('.jpeg') | file.endswith('.jpg'):
-						contentType = 'image/jpeg'
-					else:
-						contentType = 'text/plain'
-
-					content = bytes(create_headers(200, len(file_text), contentType), 'utf-8') + file_text
-
-					conn.send(content)
-				except FileNotFoundError:
-					# Send 404 not found
-					errorText = ''
-					with open('error-files/404.html', 'rb') as in_file:
-						errorText = bytes.decode(in_file.read())
-
-					conn.send(bytes(create_headers(404, len(errorText), 'text/html') + errorText, 'utf-8'))
-					print(addr[0] + ' - 404 error')
-				except:
-					# 500 error
-					with open('error-files/500.html', 'rb') as in_file:
-						errorText = bytes.decode(in_file.read())
-					conn.send(bytes(create_headers(500, len(errorText), 'text/html') + errorText, 'utf-8'))
-					print(addr[0] + ' - 500 error')
+				get(file, conn, addr)
 			if head.command == "POST":
-				print(addr[0] + '- POST')
+				print(addr[0] + ' - ' + head.cmdText)
+				post(headert[1], conn, addr)
+				argList = head.cmdText.split()
+				file = argList[1]
+				get(file, conn, addr)
 
-				conn.close()
-				continue
+			# Close connection
+			conn.close()
 
-def create_headers(code, contentLen, contentType):
-	header = ''
-	# Code is int
-	# First add the http thingy
-	header = header + 'HTTP/1.1 '
-	header = header + str(code)
-	header = header + '\r\n'
-	header = header + 'Content-Length: ' + str(contentLen) + '\r\n'
-	header = header + 'Content-Type: ' + contentType + '\r\n'
-	header = header + '\r\n'
-	return header
