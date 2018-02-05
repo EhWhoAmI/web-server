@@ -29,10 +29,10 @@ def get(file, conn, addr):
 			errorText = bytes.decode(in_file.read())
 
 			conn.send(bytes(create_headers(404, len(errorText), 'text/html') + errorText, 'utf-8'))
-			print(addr[0] + ' - 404 error' + sys.exc_info())
+			print(addr[0] + ' - 404 error' + str(sys.exc_info()))
 	except:
 		# 500 error
 		with open('error-files/500.html', 'rb') as in_file:
 			errorText = bytes.decode(in_file.read())
 			conn.send(bytes(create_headers(500, len(errorText), 'text/html') + errorText, 'utf-8'))
-			print(addr[0] + ' - 500 error' + sys.exc_info())
+			print(addr[0] + ' - 500 error' + str(sys.exc_info()))
