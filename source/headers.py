@@ -20,7 +20,11 @@ def create_headers(code, contentLen, contentType):
     header = ''
     # Code is int
     # First add the http thingy
-    codeText = {200:'OK', 301:'Moved Permanently', 404:'Not Found', 418:"I'm a teapot", 500:'Internal Server Error'} [code]
+    codeText = {200:'OK', 201:'Created', 202:'Accepted', 203:'Non-Authoriative Information', 204:'No Content',
+				205:'Reset Content', 206:'Partial Content', 207:'Multi Content', 208:'Already Reported', 226:'IM used',
+				300:'Multiple Choices', 301:'Moved Permanently', 302:'Found', 303:'See Other', 304:'Not Modified',
+				305:'Use Proxy', 306:'Switch Proxy', 307:'Temporary Redirect', 308:'Permanently Redirect',
+				404:'Not Found', 418:"I'm a teapot", 500:'Internal Server Error'} [code]
     header = header + 'HTTP/1.1 '
     header = header + str(code) + ' ' + codeText
     header = header + '\r\n'

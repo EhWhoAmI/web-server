@@ -5,7 +5,6 @@ from source.headers import *
 from source.get import *
 from source.post import *
 
-
 def server(HOST = '', PORT = 80):
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 		sock.bind((HOST, PORT))
