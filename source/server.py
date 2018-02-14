@@ -40,4 +40,3 @@ def server(HOST = '', PORT = 80):
 
 			# Close connection
 			conn.close()
-
