@@ -24,5 +24,5 @@ def sendFile(file, conn, contentType):
 			conn.send(bytes(create_headers(500, len(errorText), 'text/html') + errorText, 'utf-8'))
 			print(addr[0] + ' - 500 error' + str(sys.exc_info()))
 
-def sendText(text):
+def sendText(text, contentType, conn):
 	pass
