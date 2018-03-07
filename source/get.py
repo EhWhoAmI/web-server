@@ -16,7 +16,7 @@ def get(file, conn, addr):
 		contentType = 'text/plain'
 
 	if not file.endswith('.pyw'):
-		sendFile(file, conn, contentType)
+		sendFile(file, conn, addr, contentType)
 	else:
 		# Parse and send.
 		contentType = 'text/html'

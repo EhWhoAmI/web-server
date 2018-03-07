@@ -1,6 +1,7 @@
 from source.headers import *
+import sys
 
-def sendFile(file, conn, contentType):
+def sendFile(file, conn, addr, contentType):
 	try:
 		file_text = ''
 		with open('htdocs' + file, 'rb') as in_file:
